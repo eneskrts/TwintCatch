@@ -1,0 +1,120 @@
+version: '3.7'
+services:
+  tw_elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    container_name: tw_elasticsearch
+    restart: always
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment: 
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits: 
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+
+    volumes:
+      - elasticsearch_data_volume:/usr/share/elasticsearch/data
+  tw_redis:
+    image: redis
+    container_name: tw_redis
+    restart: always
+    command: redis-server --appendonly yes
+    command: redis-server --save 60 1
+    ports:
+      - "6379:6379"  
+    volumes:
+      - redis_data_volume:/data
+  tw_postgressql:
+    image: postgres
+    
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_NAME=postgres
+    restart: always
+
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data_volume:/var/lib/postgresql/data
+  tw_kibana:
+    container_name: tw_kibana
+    image: docker.elastic.co/kibana/kibana:7.4.0
+    restart: always
+    environment: 
+      - ELASTICSEARCH_HOSTS=http://tw_elasticsearch:9200
+    ports: 
+      - 5601:5601
+    depends_on: 
+      - tw_elasticsearch
+  tw_django:
+    build: .
+    #command: ./compose/run_django.sh
+    # command: cd /django-twint
+
+    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn TwintCatch.wsgi:application --bind 0.0.0.0:8000
+    restart: always
+    ports:
+        - "8000:8000"
+    volumes: 
+      - .:/django-twint/
+      - ./static:/django-twint/static
+    depends_on: 
+      - tw_redis
+      - tw_postgressql
+      - tw_elasticsearch
+  
+
+  rq:
+    build: .
+    restart: always
+    command: python manage.py rqworker default
+
+    volumes: 
+      - .:/django-twint/
+      - ./static:/django-twint/static
+    depends_on: 
+      - tw_django
+      - tw_elasticsearch
+      - tw_redis
+  rqscheduler:
+    build: . 
+    restart: always
+    command: python manage.py rqscheduler 
+  #   #command: ./compose/run_rqscheduler.sh
+
+    volumes: 
+      - .:/django-twint/
+      - ./static:/django-twint/static
+    depends_on: 
+      - tw_django
+      - tw_elasticsearch
+      - tw_redis
+      - rq
+  nginx:
+    build: ./nginix
+    ports:
+     - "80:80"
+    depends_on:
+      - tw_django
+    restart: always
+    volumes:
+      - ./static:/django-twint/static
+
+
+
+volumes:
+   elasticsearch_data_volume:
+   redis_data_volume:
+   postgres_data_volume:
+   static:

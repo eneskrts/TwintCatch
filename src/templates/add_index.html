@@ -1,0 +1,50 @@
+{% load static %}
+<div class="modal fade" id="indexModal" tabindex="-1" role="dialog" aria-labelledby="indexModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="indexModalLabel">Gelişmiş Arama</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+<div class="modal-body">
+    <div class="container">
+        <form action="{% url 'TwintSearch:add-search' %}" method="post">
+                {% csrf_token %}
+
+            {% for field in form_add %}
+                {% if field.name == 'surekli_alarm' %}
+                    
+              
+                    
+                    {% else %}
+                    <div class="row pl-3 pr-3 pt-2">
+                        <label for="{{ field.id_for_label }}" class="form-label"><b> {{ field.label }} </b></label>
+                        {{ field }}
+                        <hr>
+                    </div>
+
+                {% endif %}
+
+     {% endfor %}
+
+    </div>
+</div>
+      <div class="modal-footer">
+        
+
+        
+        <div class="form-check form-check-inline pull-right">
+          <input type="checkbox" name="surekli_alarm" class="form-check-input" id="id_surekli_alarm" checked>
+          <label class="form-check-label" for="id_surekli_alarm">
+           Sürekli
+          </label>
+        </div>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary "><span class="glyphicon glyphicon-print"></span>Arama Başlat</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>

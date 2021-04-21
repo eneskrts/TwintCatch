@@ -1,0 +1,76 @@
+{% load static %}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Gelişmiş Arama</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+<div class="modal-body">
+    <div class="container">
+        <form action="{% url 'TwintSearch:detailed-search' %}" method="post">
+                {% csrf_token %}
+
+            {% for field in form %}
+                {% if field.name == 'field_tweet' %}
+                    <div class="display-5 pb-2 pt-3"><b>Arama Alanı</b></div>
+                        <div class="form-check form-check-inline">
+                          {{ field }}
+                          <label class="form-check-label" for={{ field.id_for_label }}>
+                           {{ field.label }}
+                          </label>
+                            <hr>
+                        </div>
+
+                {% elif  field.name == 'field_link' or field.name == 'field_hashtag' or field.name == 'field_username' or field.name == 'field_name' %}
+
+
+
+                        <div class="form-check form-check-inline">
+                          {{ field }}
+                          <label class="form-check-label" for={{ field.id_for_label }}>
+                           {{ field.label }}
+                          </label>
+                            <hr>
+                        </div>
+                    {% elif field.name == 'field_kapsamli_arama'  %}
+                    <div class="display-5 pb-2 pt-3"><b>Detaylı Arama</b></div>
+                    <div class="form-check form-check-inline">
+                          {{ field }}
+                          <label class="form-check-label" for={{ field.id_for_label }}>
+                           {{ field.label }}
+                          </label>
+                            <hr>
+                        </div>
+                    {% elif field.name == 'field_and_vs_or'  %}
+                        <div class="form-check form-check-inline">
+                          {{ field }}
+                          <label class="form-check-label" for={{ field.id_for_label }}>
+                           {{ field.label }}
+                          </label>
+                            <hr>
+                        </div>
+                    {% else %}
+                    <div class="row pl-3 pr-3 pt-2">
+                        <label for="{{ field.id_for_label }}" class="form-label"><b> {{ field.label }} </b></label>
+                        {{ field }}
+                        <hr>
+                    </div>
+
+                {% endif %}
+
+     {% endfor %}
+
+    </div>
+</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary "><span class="glyphicon glyphicon-print"></span>Gelişmiş Arama</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>

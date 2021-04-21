@@ -1,0 +1,133 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+
+
+<link href="{% static 'template.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+// <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+
+
+
+
+  </head>
+  <body style="background-image: url('{% static 'images/background.jpg' %}');background-repeat: no-repeat;">
+    {% include 'detailed_search.html'%}
+    {% include 'add_index.html' %}
+<!------ Include the above in your HEAD tag ---------->
+{% include 'messages.html' %}
+<div class="container pt-5 ">
+	<div class="row pt-5 ">
+    
+		<div class="col-md-12">
+      
+<form action="{% url 'TwintSearch:search' %}" method="post">
+    {% csrf_token %}
+            <div class="input-group">
+
+                {% for field in form %}
+                    {% if field.name == 'search_key' %}
+                    <input type="text" name="search_key" class="form-control id_search_key1" required="" id="id_search_key1">
+
+                    {% endif %}
+
+
+                <!--<input id="search_box" type="text" class="form-control" placeholder="Search for snippets"  style="width: 100%" /> -->
+                {% endfor %}
+                <div class="input-group-btn">
+                    <div class="btn-group" role="group">
+                        <button type="button" onclick="adv_fnk()" class="btn btn-warning"><span aria-hidden="true" data-toggle="modal" id="advanced_search" data-target="#exampleModal" >Gelişmiş Arama</span></button>
+                        
+                        <input type="submit"  class="btn btn-primary" value="Ara"><span aria-hidden="true" class="glyphicon glyphicon-search"></span> </input>
+                        <button type="button" onclick="" class="ml-5 btn btn-danger"><span aria-hidden="true" data-toggle="modal" id="add_search" data-target="#indexModal" >Yeni Kayıt Ekle</span></button>
+                        <button type="button" onclick="location.href='{% url "alerts" %}'" class="btn btn-success"><span aria-hidden="true" class="glyphicon glyphicon-setting" > Alarmlar</span></button>
+                    </div>
+                </div>
+            </div>
+       </form>
+        </div>
+    </div>
+
+</div>
+
+{% if search_results|length > 0 and search_results != "-" %}
+
+<div class="container mt-5">
+
+
+        <div class="display-6" >Toplam {{ search_results|length }} Kayıt Listelendi</div>
+    <div class="d-flex row flex-row-reverse ">
+
+    <div class="col-md-3  pr-0 mr-0 mb-2">
+        <input id="myInput" class="form-control" type="text" placeholder="Filtrele..">
+    </div>
+    <div class="row ">
+
+
+        <table  class="table table-striped ">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Username</th>
+      <th scope="col">Tweet</th>
+      <th scope="col">Hashtags</th>
+        <th scope="col">Created At</th>
+    </tr>
+  </thead>
+  <tbody id="myTable">
+   {% for search_row in search_results %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ search_row.username }}</td>
+      <td>{{ search_row.tweet }}</td>
+      <td>{{ search_row.hashtags }}</td>
+        <td>{{ search_row.created_at }}</td>
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+</div>
+    </div>
+</div>
+    {% elif search_results == "-" %}
+    <div class="container">
+    <div class="row">
+         <p class="text-justify display-4  pt-5 ml-5">Kayıt bulunamadı</p>
+    </div>
+    </div>
+
+{% endif %}
+
+  <script type="text/javascript">
+      $(document).ready(function(){
+        //  document.getElementById("id_search_key1").value = document.getElementById("id_search_key").value = x
+            $("#myInput").on("keyup", function() {
+
+    var value = $(this).val().toLowerCase();
+
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+
+      });
+    function adv_fnk(){
+        //document.getElementsByClassName("id_search_key1").value = "asdsadsadsadsadasdsadads"
+       var x = document.getElementById("id_search_key1").value
+        document.getElementById("id_search_key").value = x
+
+    }
+
+
+  </script>
+
+
+</body>
+
+</html>

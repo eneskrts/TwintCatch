@@ -1,0 +1,113 @@
+{% load static %}
+{% load tz %}
+<!doctype html>
+<html lang="tr">
+  <head>
+
+
+<link href="{% static 'template.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+// <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<style>
+    table tr td a {
+    display:block;
+    height:100%;
+    width:100%;
+    
+}
+</style>
+
+
+
+
+  </head>
+  <body style="background-image: url('{% static 'images/background.jpg' %}');background-repeat: no-repeat;">
+
+{% include 'messages.html' %}
+<div class="container pt-5 ">
+	<div class="row pt-5 ">
+		<div class="col-md-12">
+      <div class="row">
+        <div class="col-md-4 ">
+          <a href="{% url 'TwintSearch:search' %}" class="btn btn-info btn-lg">
+            <span class="glyphicon glyphicon-home"></span> Anasayfa
+          </a>
+        </div>
+        <div class="col md-8">
+          <div class="display-3 ml-5" style=" display: inline; text-align: center;">Bildirimler</div>
+
+        </div>
+      </div>
+       
+                <hr>
+
+        
+        
+        <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Search Keyword</th>
+      <th scope="col">Bildirim</th>
+      <th scope="col">Son Taranma Tarihi</th>
+      <th scope="col">Durumu</th>
+    </tr>
+  </thead>
+  <tbody>
+      
+      {% for row in table_data %}
+      
+    <tr  style="cursor: pointer;">
+        
+      <td>
+          <a href="{% url 'TwintSearch:alert-search' row.task_id  %}">
+           {{ row.keyword }}
+          </a>
+          </td>
+      <td>
+        <a href="{% url 'TwintSearch:alert-search' row.task_id  %}">
+        <h5> 
+        
+            <span class="badge badge-pill badge-primary" style="background-color:red">{{ row.bildirim_sayi }}</span>
+        </h5>  
+        </a>
+      </td>
+      <td>
+        <a href="{% url 'TwintSearch:alert-search' row.task_id  %}">
+           {% load tz %}
+        {% get_current_timezone as tz %}
+        {% timezone tz %}
+            {{ row.tarih }}
+        {% endtimezone %}   
+        
+       </a>
+        <td>
+          <div class="col-md-6">
+              <a href="{% url 'TwintSearch:delete-task' row.task_id  %}" class="btn btn-danger mr-5 pull-right">
+          <span class="glyphicon glyphicon-trash"></span> Görevi Sil
+        </a>
+          </div>
+         
+        
+        </td>
+       
+       
+      </td>
+  
+    </tr>
+   {% endfor %}
+  </tbody>
+</table>
+        </div>
+
+        </div>
+       
+       
+        </div>
+    </body>
+</html>
