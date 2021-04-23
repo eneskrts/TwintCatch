@@ -34,10 +34,15 @@ class SearchElk():
         if len(search_kelimeler)<2:
             print("urdas")
             try:
-                pass
+                
+                 s = s.filter(SimpleQueryString(
+                             query=query_near,
+                             fields=fields,
+                             default_operator=default_operator
+                 ))[:10000]
                 #s = s.filter(SimpleQueryString(query="%s"%query),fields=fields,default_operator=default_operator)[:10000]
             except Exception as e:
-                print("enes",e)
+                print("elasticsearch.py 45 error",e)
         else:
             
             q = Q('bool',
