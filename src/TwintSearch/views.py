@@ -217,7 +217,7 @@ def DeleteTaskView(request,id):
     
     try:
         task.delete()
-        messages.success("%s Kaydı Başarılı Bir Şekilde Durduruldu"%task.keyword,extra_tags="success")
+        messages.success(request,"%s Kaydı Başarılı Bir Şekilde Durduruldu"%task.keyword,extra_tags="success")
     except Exception as e :
         print(str(e),"Cancel Job")
         messages.success(request,"Bu Bilgilerde Bir Kayıt Bulunamadı",extra_tags="danger")
