@@ -36,7 +36,7 @@ class SearchElk():
             try:
                 
                  s = s.filter(SimpleQueryString(
-                             query=query_near,
+                             query=query_tr+"|"+query_orjinal,
                              fields=fields,
                              default_operator=default_operator
                  ))[:10000]
