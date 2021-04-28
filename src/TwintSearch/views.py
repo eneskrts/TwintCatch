@@ -209,6 +209,9 @@ from rq.job import Job
 
 @login_required(login_url=reverse_lazy('alerts'))
 def DeleteTaskView(request,id):
+    if not request.user.is_superuser:
+        messages.success(request,"Görev silme yetkiniz yok",extra_tags="warning")
+        return HttpResponseRedirect(reverse_lazy('alerts'))
     try:
         task = ScheduledTask.objects.get(id=id)
     except:
