@@ -87,11 +87,15 @@
         
        </a>
         <td>
+		{% if request.user.is_superuser %}
           <div class="col-md-6">
               <a href="{% url 'TwintSearch:delete-task' row.task_id  %}" class="btn btn-danger mr-5 pull-right">
           <span class="glyphicon glyphicon-trash"></span> Görevi Sil
         </a>
           </div>
+		{% else %} 
+		-
+		{% endif %}
          
         
         </td>
