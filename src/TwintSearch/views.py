@@ -74,36 +74,13 @@ def date_finder(request,form):
         "hafta": 7
     }
     return switcher.get(form.get("date_filter"))
-    # if form.get("date_filter") == "all":
-    #     return 10000
-    # elif form.get("date_filter") == "yil":
-    #     return 365
-    # elif form.get("date_filter") == "ay":
-    #     return 30
-    # elif form.get("date_filter") == "hafta":
-    #     return 7
-    # else:
-    #     adv_search_form = SearchForm()
-    #     add_form = AddAlertForm()
-    #     # message
-    #     return render(request, "search.html", context={'form': adv_search_form,'form_add':add_form})
+
 
 def search_field_select(form):
     arr = ["search^4"]
-    #"tweet^2", "hashtags", "username", "name", "link"
     if form.get("field_tweet"):
         arr.append("tweet^2")
-    if form.get("field_hashtag"):
-        arr.append("hashtags")
-    if form.get("field_username"):
-        arr.append("username")
-    if form.get("field_name"):
-        arr.append("name")
-    if form.get("field_link"):
-        arr.append("link")
-    if len(arr) <1:
-        arr = ["tweet^2","search^4"]
-    return arr
+
 def add_detail_to_search(form):
     if form.get("field_kapsamli_arama"):
         arama_kelime = ""
@@ -114,7 +91,7 @@ def add_detail_to_search(form):
     return form.get("search_key")
 def veya_sorgu(form):
     operator = "and"
-    if form.get("field_and_vs_or"):
+    if form.cleaned_data.get("field_and_vs_or"):
         operator = "or"
     return operator
 
