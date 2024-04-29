@@ -1,9 +1,8 @@
 from django.db import models
-from django_rq import get_connection,get_scheduler
 from rq.job import Job
-# Create your models here.
-from rq import get_current_job
-
+from django.dispatch import receiver
+from django.db.models.signals import pre_delete
+from django_rq import get_connection,get_scheduler
 from django.contrib.auth.models import User
 class Task(models.Model):
     class Meta:
@@ -19,6 +18,8 @@ class Task(models.Model):
 
     def __str__(self):
         return self.keyword
+
+
 class ScheduledTask(models.Model):
     class Meta:
         verbose_name_plural = "Sürekli Görevler"
@@ -38,13 +39,11 @@ class ScheduledTaskInstance(models.Model):
     scheduled_task = models.ForeignKey('ScheduledTask',on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     result = models.IntegerField(blank=True, null=True)
+
     def __str__(self):
         return self.scheduled_task.keyword
 
 
-from django.dispatch import receiver
-from django.db.models.signals import pre_delete
-from django_rq import get_connection,get_scheduler
 @receiver(pre_delete, sender=ScheduledTask)
 def delete_job(sender, instance, using, **kwargs):
 
@@ -54,7 +53,7 @@ def delete_job(sender, instance, using, **kwargs):
         job = Job.fetch(job_id,connection=con)
         job.delete()
     except:
-        pass
+        print("Job not found")
     
 
     

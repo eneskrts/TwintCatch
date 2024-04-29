@@ -11,26 +11,23 @@ import datetime
 from django.db.models import Sum
 from TwintSearch.models import ScheduledTaskInstance,ScheduledTask
 from .models import UserAlert
-from TwintSearch.elasticsearch import SearchElk
+from TwintSearch.es import SearchElk
+
 
 def LoginView(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect("/")
-    # if request.user:
-    #     return HttpResponseRedirect("/")
+
     if request.method == "POST":
         form = LoginForm(request.POST)
-        # print("Buraaaa")
-        # print(form)
-        if form.is_valid():
 
-            #messages.success(request,"Başarıyla Giriş Yaptınız. Anasayfaya Yönlendiriliyorsunuz.")
+        if form.is_valid():
+            messages.success(request,"Başarıyla Giriş Yaptınız. Anasayfaya Yönlendiriliyorsunuz.")
             username = request.POST.get("username")
             user = User.objects.get(username=username)
-
-            
-            login(request,user)
-            messages.success(request,"Giriş Yaptığınız İçin Teşekkürler %s"%(user.username),extra_tags="success")
+            login(request, user)
+            messages.success(request, "Giriş Yaptığınız İçin Teşekkürler %s"
+                             %user.username, extra_tags="success")
             return HttpResponseRedirect("/")
 
         messages.success(request, "Kullanıcı Adı veya Parola Hatalı.", extra_tags="danger")
@@ -38,7 +35,9 @@ def LoginView(request):
     else:
 
         form = LoginForm()
-        return render(request,"login.html",context={'form':form})
+        return render(request,"login.html",context={'form': form})
+
+
 @login_required(login_url=reverse_lazy('login'))
 def LogoutView(request):
     messages.success(request,"Başarıyla Çıkış Yaptınız",extra_tags="success")
@@ -59,10 +58,7 @@ def AlertView(request):
             date = (datetime.datetime.now() - datetime.timedelta(days=100000))
             usertask.seen = date
             usertask.save()
-        tarih = usertask.seen.strftime("%Y-%m-%d %H:%M:%S")
-        #search_results = search.customSearch4Alert(query=task.keyword,tarih=tarih)
         instances = ScheduledTaskInstance.objects.filter(scheduled_task=task,created_on__gte=usertask.seen).aggregate(Sum('result'))
-        #print(task.keyword,search_results)
 
         if instances.get("result__sum"):
             table_data.append({

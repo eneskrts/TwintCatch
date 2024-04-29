@@ -17,9 +17,6 @@ from django.contrib.auth.models import User
 from django.forms import ValidationError
 
 
-
-
-
 class LoginForm(forms.Form):
     username = forms.CharField(required=True,max_length=40,label="Kullanıcı Adı",
                             widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Kullanıcı Adınızı Giriniz'}))
@@ -33,12 +30,10 @@ class LoginForm(forms.Form):
         user = None
         if User.objects.filter(username=username).exists():
             user = User.objects.get(username=username)
-        if not user :
+        if not user:
             raise forms.ValidationError("Bu Bilgilerde kullanıcı bulunamadı")
 
-        kullanici = authenticate(username=user.username,password=password)
+        authenticated_user = authenticate(username=user.username,password=password)
 
-
-
-        if not kullanici :
+        if not authenticated_user :
             raise forms.ValidationError("Bu Bilgilerde kullanıcı bulunamadı")

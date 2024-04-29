@@ -1,4 +1,4 @@
-version: '3.7'
+version: '2'
 services:
   tw_elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
@@ -26,7 +26,6 @@ services:
     image: redis
     container_name: tw_redis
     restart: always
-    command: redis-server --appendonly yes
     command: redis-server --save 60 1
     ports:
       - "6379:6379"  
@@ -62,7 +61,6 @@ services:
     # command: cd /django-twint
 
     command: python manage.py runserver 0.0.0.0:8000
-    command: gunicorn TwintCatch.wsgi:application --bind 0.0.0.0:8000
     restart: always
     ports:
         - "8000:8000"
@@ -102,7 +100,7 @@ services:
       - tw_redis
       - rq
   nginx:
-    build: ./nginix
+    build: ./nginx
     ports:
      - "80:80"
     depends_on:

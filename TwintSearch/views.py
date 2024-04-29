@@ -1,25 +1,18 @@
 from django.shortcuts import render
 from kullanici.models import UserAlert
-# Create your views here.
-from django.urls import reverse,reverse_lazy
-from django.http import HttpResponseRedirect
-from django.http import HttpResponse
-from elasticsearch import Elasticsearch
-from django.shortcuts import redirect,reverse
-from elasticsearch_dsl import Search, Q
-from elasticsearch_dsl.query import SimpleQueryString
+
 import datetime
 from django.contrib import messages
 from .forms import SearchForm,AddAlertForm
 import twint
 from django.contrib.auth.models import User
-from .elasticsearch import SearchElk
+from .es import SearchElk
 from .models import ScheduledTaskInstance,ScheduledTask
 from django.utils import timezone
 from django.urls import reverse,reverse_lazy
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from rq import cancel_job
+
 @login_required(login_url=reverse_lazy('login'))
 def SearchView(request):
     form = SearchForm(request.POST or None)
@@ -38,7 +31,8 @@ def SearchView(request):
             except Exception as e:
                 data = "-"
             return render(request,"search.html",context={"form":form,"search_results":data,'form_add':form_add})
-    return render(request,"search.html",context={"form":form,'form_add':form_add})
+    return render(request,"search.html",context={"form": form,'form_add':form_add})
+
 @login_required(login_url=reverse_lazy('login'))
 def Search4Alert(request,id):
     try:
@@ -108,16 +102,6 @@ def DetailedSearchView(request):
         adv_search_form = SearchForm(data=request.POST)
         form_add = AddAlertForm()
         return render(request, "search.html", context={'form': adv_search_form,"search_results": search_results,'form_add':form_add})
- 
-
-
-
-
-
-
-
-
-
 
 
     adv_search_form = SearchForm()
@@ -161,7 +145,7 @@ def AddTweetView(request):
                     return HttpResponseRedirect(reverse_lazy('alerts'))
                 except:
                     pass
-                addTweetOnce.delay(search_key)
+                addTweetOnce(search_key)
 
             else:
                 try:

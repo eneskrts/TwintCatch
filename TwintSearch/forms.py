@@ -1,9 +1,6 @@
 from django import forms
 
 
-
-
-
 class SearchForm(forms.Form):
     search_date = [
         ("all","Tüm Tweetler"),
@@ -45,6 +42,7 @@ class AddAlertForm(forms.Form):
     aranacak_ifade = forms.CharField(label="Aranacak İfade",max_length=200,required=True)
     surekli_alarm = forms.BooleanField(initial=True,label="Keyword Sürekli Taransın",required=False)
     aralik = forms.CharField(label="Zaman Aralığı",widget=forms.Select(choices=list_aralik))
+
     def __init__(self,*args,**kwargs):
         super(AddAlertForm, self).__init__(*args,**kwargs)
         for field in self.fields:
@@ -54,11 +52,13 @@ class AddAlertForm(forms.Form):
                 continue
             else:
                 self.fields[field].widget.attrs = {'class':'form-control'}
+
     def cleaned_surekli_alarm(self):
         cleaned = self.cleaned_data
         if cleaned.get("surekli_alarm"):
             return True
         return False
+
     def cleaned_aralik(self):
         cleaned = self.cleaned_data
         switcher = {
@@ -70,5 +70,4 @@ class AddAlertForm(forms.Form):
         }
  
         intervalInt = switcher.get(cleaned.get("aralik"))
-        print(intervalInt)
         return intervalInt

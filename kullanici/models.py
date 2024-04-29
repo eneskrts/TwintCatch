@@ -3,6 +3,8 @@ from django.db import models
 # Create your models here.
 from TwintSearch.models import ScheduledTask
 from django.contrib.auth.models import User
+
+
 class UserAlert(models.Model):
     class Meta:
         verbose_name_plural = "Kullanıcı Bildirimleri"

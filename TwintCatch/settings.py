@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'f(d=wo+rej1w3pg#boof5pxnc3!+e(m14ufpy9%-%@_mo1qmv6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -53,10 +53,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'TwintCatch.urls'
-#STATICFILES_DIRS = [
-#    BASE_DIR / "static",
 
-#]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -131,17 +128,12 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
-
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://tw_redis:6379/0",
+        "LOCATION": "redis://localhost:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -151,7 +143,7 @@ CACHES = {
 # Use the same redis as with caches for RQ
 RQ_QUEUES = {
     'default': {
-        'HOST': 'tw_redis',
+        'HOST': 'localhost',
         'PORT': 6379,
         'DB': 0,
         'PASSWORD': '',
@@ -159,7 +151,7 @@ RQ_QUEUES = {
     },
     
     'low': {
-        'HOST': 'tw_redis',
+        'HOST': 'localhost',
         'PORT': 6379,
         'DB': 0,
     }
@@ -201,3 +193,6 @@ LOGGING = {
         },
     },
 }
+STATICFILES_DIRS = (os.path.join('static'), )
+
+STATICFILES_DIRS = (BASE_DIR / 'static', )
